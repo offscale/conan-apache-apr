@@ -22,11 +22,9 @@ class ApacheaprConan(ConanFile):
         with tools.environment_append(env_build.vars):
             configure_command = "./configure"
             if self.settings.os == "Windows":
-                configure_command = configure_command + ".bat"
+                configure_command += ".bat"
 
-            include_dir = os.path.join(os.getcwd(), "include")
-            lib_dir = os.path.join(os.getcwd(), "lib")
-            configure_command = configure_command + " --prefix=" + os.getcwd()
+            configure_command += " --prefix=" + os.getcwd()
 
             with tools.chdir("apr-" + self.version):
                 self.run(configure_command)
@@ -37,7 +35,7 @@ class ApacheaprConan(ConanFile):
         self.copy("*.so*", dst="lib", src="lib", keep_path=False)
         self.copy("*.a", dst="lib", src="lib", keep_path=False)
         self.copy("*.h", dst="include", src="include", keep_path=True)
-        self.copy("apr-config", dst="bin", src="bin", keep_path=False)
+        self.copy("apr-1-config", dst="bin", src="bin", keep_path=False)
 
     def package_info(self):
         self.cpp_info.bindirs = ["bin"]
