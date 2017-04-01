@@ -9,7 +9,6 @@ class ApacheaprConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     default_options = "shared=False"
-    generators = "cmake"
     lib_name = name + "-" + version
 
     def source(self):
@@ -29,7 +28,7 @@ class ApacheaprConan(ConanFile):
             with tools.chdir("apr-" + self.version):
                 self.run(configure_command)
                 self.run("make -j " + str(max(tools.cpu_count() - 1, 1)))
-                self.run("make install ")
+                self.run("make install")
 
     def package(self):
         self.copy("*.so*", dst="lib", src="lib", keep_path=False)
@@ -38,5 +37,6 @@ class ApacheaprConan(ConanFile):
         self.copy("apr-1-config", dst="bin", src="bin", keep_path=False)
 
     def package_info(self):
+        self.cpp_info.includedirs = ["include", "include/apr-1"]
         self.cpp_info.bindirs = ["bin"]
         self.cpp_info.libs = ["apr-1"]
