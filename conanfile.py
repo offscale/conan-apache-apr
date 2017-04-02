@@ -35,6 +35,7 @@ class ApacheaprConan(ConanFile):
         self.copy("*.a", dst="lib", src="lib", keep_path=False)
         self.copy("*.h", dst="include", src="include", keep_path=True)
         self.copy("apr-1-config", dst="bin", src="bin", keep_path=False)
+        self.copy("*", dst="build-1", src="build-1", keep_path=True)
 
     def package_info(self):
         self.cpp_info.includedirs = ["include", "include/apr-1"]
