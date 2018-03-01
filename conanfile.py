@@ -42,7 +42,7 @@ class ApacheaprConan(ConanFile):
             env_build = AutoToolsBuildEnvironment(self)
             env_build.configure(configure_dir=self.lib_name,  #os.path.join(self.source_folder, self.lib_name),
                                 args=['--prefix', self.package_folder, ],
-                                build=False)
+                                build=False)  # TODO: Workaround: in docker with x64 kernel AutoTools passes --build=x86_64 to 'cofigure' converting it into a cross-compilation
             env_build.make()
             env_build.make(args=['install'])
 
