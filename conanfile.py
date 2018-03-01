@@ -4,7 +4,7 @@ import os
 
 class ApacheaprConan(ConanFile):
     name = "apache-apr"
-    version = "1.5.2"
+    version = "1.6.3"
     license = "Apache-2.0"
     url = "https://github.com/mkovalchik/conan-apache-apr"
     settings = "os", "compiler", "build_type", "arch"
