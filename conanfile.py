@@ -10,25 +10,30 @@ class ApacheaprConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     default_options = "shared=False"
-    lib_name = name + "-" + version
+    lib_name = "apr-" + version
 
     def source(self):
         file_ext = ".tar.gz" if not self.settings.os == "Windows" else "-win32-src.zip"
         tools.get("http://archive.apache.org/dist/apr/apr-{v}{ext}".format(v=self.version, ext=file_ext))
 
     def build(self):
+        print("*"*20)
+        print(os.path.join(self.source_folder, self.lib_name))
+        print(os.path.join(self.package_folder))
+        print("*" * 20)
         if self.settings.os == "Windows":
             if self.settings.build_type == "Debug":
-                tools.replace_in_file(os.path.join("apr-{v}".format(v=self.version), 'CMakeLists.txt'),
+                tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
                                       "SET(install_bin_pdb ${install_bin_pdb} ${PROJECT_BINARY_DIR}/libapr-1.pdb)",
                                       "SET(install_bin_pdb ${install_bin_pdb} ${PROJECT_BINARY_DIR}/Debug/libapr-1.pdb)")
             cmake = CMake(self)
-            cmake.configure(source_folder="apr-" + self.version)
+            cmake.configure(source_folder=self.lib_name)
             cmake.build()
             cmake.install()
         else:
             env_build = AutoToolsBuildEnvironment(self)
-            env_build.configure(configure_dir=self.lib_name, args=['--prefix', self.package_folder, ])
+            env_build.configure(configure_dir=self.lib_name,  #os.path.join(self.source_folder, self.lib_name),
+                                args=['--prefix', self.package_folder, ])
             env_build.make()
             env_build.make(args=['install'])
 
