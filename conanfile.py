@@ -14,8 +14,7 @@ class ApacheaprConan(ConanFile):
 
     def source(self):
         file_ext = ".tar.gz" if not self.settings.os == "Windows" else "-win32-src.zip"
-        tools.download("http://archive.apache.org/dist/apr/apr-" + self.version + file_ext, self.lib_name + file_ext)
-        tools.unzip(self.lib_name + file_ext)
+        tools.get("http://archive.apache.org/dist/apr/apr-{v}{ext}".format(v=self.version, ext=file_ext))
 
     def build(self):
         if self.settings.os == "Windows":
@@ -29,10 +28,9 @@ class ApacheaprConan(ConanFile):
             cmake.install()
         else:
             env_build = AutoToolsBuildEnvironment(self)
-            env_build.configure(args=['--prefix', self.package_folder, ])
+            env_build.configure(configure_dir=self.lib_name, args=['--prefix', self.package_folder, ])
             env_build.make()
-            with tools.environment_append(env_build.vars):
-                self.run("make install")
+            env_build.make(args=['install'])
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
