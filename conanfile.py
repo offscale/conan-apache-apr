@@ -29,7 +29,7 @@ class ApacheaprConan(ConanFile):
             cmake.install()
         else:
             env_build = AutoToolsBuildEnvironment(self)
-            env_build.configure(args=['--prefix={}'.format(self.package_folder), ])
+            env_build.configure(args=['--prefix', self.package_folder, ])
             env_build.make()
             with tools.environment_append(env_build.vars):
                 self.run("make install")
