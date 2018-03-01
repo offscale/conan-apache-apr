@@ -17,10 +17,6 @@ class ApacheaprConan(ConanFile):
         tools.get("http://archive.apache.org/dist/apr/apr-{v}{ext}".format(v=self.version, ext=file_ext))
 
     def build(self):
-        print("*"*20)
-        print(os.path.join(self.source_folder, self.lib_name))
-        print(os.path.join(self.package_folder))
-        print("*" * 20)
         if self.settings.os == "Windows":
             if self.settings.build_type == "Debug":
                 tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
@@ -40,6 +36,9 @@ class ApacheaprConan(ConanFile):
             cmake.build()
             cmake.install()
         else:
+            print("*"*20)
+            print(tools.detected_architecture())
+            print("*" * 20)
             env_build = AutoToolsBuildEnvironment(self)
             env_build.configure(configure_dir=self.lib_name,  #os.path.join(self.source_folder, self.lib_name),
                                 args=['--prefix', self.package_folder, ])
