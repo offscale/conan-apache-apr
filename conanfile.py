@@ -36,9 +36,6 @@ class ApacheaprConan(ConanFile):
             cmake.build()
             cmake.install()
         else:
-            print("*"*20)
-            print(tools.detected_architecture())
-            print("*" * 20)
             env_build = AutoToolsBuildEnvironment(self)
             env_build.configure(configure_dir=self.lib_name,  #os.path.join(self.source_folder, self.lib_name),
                                 args=['--prefix', self.package_folder, ],
