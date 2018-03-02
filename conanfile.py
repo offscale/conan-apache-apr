@@ -2,7 +2,7 @@ from conans import ConanFile, AutoToolsBuildEnvironment, tools, CMake
 import os
 
 
-class ApacheaprConan(ConanFile):
+class ApacheAPR(ConanFile):
     name = "apache-apr"
     version = "1.6.3"
     license = "Apache-2.0"
@@ -37,7 +37,7 @@ class ApacheaprConan(ConanFile):
             cmake.install()
         else:
             env_build = AutoToolsBuildEnvironment(self)
-            env_build.configure(configure_dir=self.lib_name,  #os.path.join(self.source_folder, self.lib_name),
+            env_build.configure(configure_dir=self.lib_name,
                                 args=['--prefix', self.package_folder, ],
                                 build=False)  # TODO: Workaround: in docker with x64 kernel AutoTools passes --build=x86_64 to 'cofigure' converting it into a cross-compilation
             env_build.make()
