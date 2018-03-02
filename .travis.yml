@@ -11,7 +11,7 @@ osx: &osx
 env:
    global:
      - PYTHONUNBUFFERED=1
-     - CONAN_OPTIONS=shared
+
 matrix:
    include:
       - <<: *linux
