@@ -5,11 +5,14 @@ import os
 class ApacheAPR(ConanFile):
     name = "apache-apr"
     version = "1.6.3"
-    license = "Apache-2.0"
-    url = "https://github.com/mkovalchik/conan-apache-apr"
+    url = "https://github.com/jgsogo/conan-apache-apr"
+    homepage = "https://apr.apache.org/"
+    license = "http://www.apache.org/LICENSE.txt"
+    exports_sources = ["LICENSE",]
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     default_options = "shared=False"
+
     lib_name = "apr-" + version
 
     def source(self):
@@ -43,7 +46,7 @@ class ApacheAPR(ConanFile):
             env_build = AutoToolsBuildEnvironment(self)
             env_build.configure(configure_dir=self.lib_name,
                                 args=['--prefix', self.package_folder, ],
-                                build=False)  # TODO: Workaround: in docker with x64 kernel AutoTools passes --build=x86_64 to 'cofigure' converting it into a cross-compilation
+                                build=False)  # TODO: Workaround for https://github.com/conan-io/conan/issues/2552
             env_build.make()
             env_build.make(args=['install'])
 
