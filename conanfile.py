@@ -16,7 +16,7 @@ class ApacheAPR(ConanFile):
         file_ext = ".tar.gz" if not self.settings.os == "Windows" else "-win32-src.zip"
         tools.get("http://archive.apache.org/dist/apr/apr-{v}{ext}".format(v=self.version, ext=file_ext))
 
-    def build(self):
+    def patch(self):
         if self.settings.os == "Windows":
             if self.settings.build_type == "Debug":
                 tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
@@ -31,6 +31,10 @@ class ApacheAPR(ConanFile):
             tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
                                   "INSTALL(FILES include/arch/apr_private_common.h DESTINATION include/arch)",
                                   "INSTALL(FILES include/arch/apr_private_common.h DESTINATION include/apr-1/arch)")
+
+    def build(self):
+        self.patch()
+        if self.settings.os == "Windows":
             cmake = CMake(self)
             cmake.configure(source_folder=self.lib_name)
             cmake.build()
