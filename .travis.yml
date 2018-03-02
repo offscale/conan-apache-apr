@@ -9,8 +9,9 @@ osx: &osx
    os: osx
    language: generic
 env:
- - PYTHONUNBUFFERED=1
- - CONAN_OPTIONS=shared
+   global:
+     - PYTHONUNBUFFERED=1
+     - CONAN_OPTIONS=shared
 matrix:
    include:
       - <<: *linux
