@@ -8,6 +8,10 @@ linux: &linux
 osx: &osx
    os: osx
    language: generic
+env:
+   global:
+     - PYTHONUNBUFFERED=1
+
 matrix:
    include:
       - <<: *linux

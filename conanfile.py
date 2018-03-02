@@ -2,9 +2,9 @@ from conans import ConanFile, AutoToolsBuildEnvironment, tools, CMake
 import os
 
 
-class ApacheaprConan(ConanFile):
+class ApacheAPR(ConanFile):
     name = "apache-apr"
-    version = "1.5.2"
+    version = "1.6.3"
     license = "Apache-2.0"
     url = "https://github.com/mkovalchik/conan-apache-apr"
     settings = "os", "compiler", "build_type", "arch"
@@ -16,7 +16,7 @@ class ApacheaprConan(ConanFile):
         file_ext = ".tar.gz" if not self.settings.os == "Windows" else "-win32-src.zip"
         tools.get("http://archive.apache.org/dist/apr/apr-{v}{ext}".format(v=self.version, ext=file_ext))
 
-    def build(self):
+    def patch(self):
         if self.settings.os == "Windows":
             if self.settings.build_type == "Debug":
                 tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
@@ -31,13 +31,17 @@ class ApacheaprConan(ConanFile):
             tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
                                   "INSTALL(FILES include/arch/apr_private_common.h DESTINATION include/arch)",
                                   "INSTALL(FILES include/arch/apr_private_common.h DESTINATION include/apr-1/arch)")
+
+    def build(self):
+        self.patch()
+        if self.settings.os == "Windows":
             cmake = CMake(self)
             cmake.configure(source_folder=self.lib_name)
             cmake.build()
             cmake.install()
         else:
             env_build = AutoToolsBuildEnvironment(self)
-            env_build.configure(configure_dir=self.lib_name,  #os.path.join(self.source_folder, self.lib_name),
+            env_build.configure(configure_dir=self.lib_name,
                                 args=['--prefix', self.package_folder, ],
                                 build=False)  # TODO: Workaround: in docker with x64 kernel AutoTools passes --build=x86_64 to 'cofigure' converting it into a cross-compilation
             env_build.make()
