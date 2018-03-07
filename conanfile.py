@@ -50,6 +50,9 @@ class ApacheAPR(ConanFile):
             env_build.make()
             env_build.make(args=['install'])
 
+    def package_id(self):
+        self.info.options.shared = "Any"  # Both, shared and not are built always
+
     def package_info(self):
         if self.options.shared:
             libs = ["libapr-1", "libaprapp-1", ]
