@@ -51,4 +51,11 @@ class ApacheAPR(ConanFile):
             env_build.make(args=['install'])
 
     def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
+        if self.options.shared:
+            libs = ["libapr-1", "libaprapp-1", ]
+        else:
+            self.cpp_info.defines = ["APR_DECLARE_STATIC", ]
+            libs = ["apr-1", "aprapp-1", ]
+            if self.settings.os == "Windows":
+                libs += ["ws2_32", "Rpcrt4", ]
+        self.cpp_info.libs = libs
