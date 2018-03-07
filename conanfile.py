@@ -44,11 +44,20 @@ class ApacheAPR(ConanFile):
             cmake.install()
         else:
             env_build = AutoToolsBuildEnvironment(self)
-            env_build.configure(configure_dir=self.lib_name,
-                                args=['--prefix', self.package_folder, ],
-                                build=False)  # TODO: Workaround for https://github.com/conan-io/conan/issues/2552
+            env_build.configure(configure_dir=self.lib_name, args=['--prefix', self.package_folder, ], build=False)
             env_build.make()
             env_build.make(args=['install'])
 
+    def package_id(self):
+        self.info.options.shared = "Any"  # Both, shared and not are built always
+
     def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
+        libs = ["apr-1", ]
+        if self.settings.os == "Windows":
+            libs += ["aprapp-1", ]
+            if self.options.shared:
+                libs = ["libapr-1", "libaprapp-1", ]
+            else:
+                self.cpp_info.defines = ["APR_DECLARE_STATIC", ]
+                libs += ["ws2_32", "Rpcrt4", ]
+        self.cpp_info.libs = libs
