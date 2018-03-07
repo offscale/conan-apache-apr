@@ -52,11 +52,11 @@ class ApacheAPR(ConanFile):
         self.info.options.shared = "Any"  # Both, shared and not are built always
 
     def package_info(self):
-        if self.options.shared:
-            libs = ["libapr-1", "libaprapp-1", ]
-        else:
-            self.cpp_info.defines = ["APR_DECLARE_STATIC", ]
-            libs = ["apr-1", "aprapp-1", ]
-            if self.settings.os == "Windows":
+        libs = ["apr-1", "aprapp-1", ]
+        if self.settings.os == "Windows":
+            if self.options.shared:
+                libs = ["libapr-1", "libaprapp-1", ]
+            else:
+                self.cpp_info.defines = ["APR_DECLARE_STATIC", ]
                 libs += ["ws2_32", "Rpcrt4", ]
         self.cpp_info.libs = libs
