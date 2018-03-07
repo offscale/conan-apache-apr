@@ -44,7 +44,7 @@ class ApacheAPR(ConanFile):
             cmake.install()
         else:
             env_build = AutoToolsBuildEnvironment(self)
-            env_build.configure(configure_dir=self.lib_name, args=['--prefix', self.package_folder, ])
+            env_build.configure(configure_dir=self.lib_name, args=['--prefix', self.package_folder, ], build=False)
             env_build.make()
             env_build.make(args=['install'])
 
