@@ -55,7 +55,6 @@ class ApacheAPR(ConanFile):
         self.patch()
         if self.settings.os == "Windows":
             cmake = CMake(self)
-
             cmake.configure(source_folder=self.lib_name)
             cmake.build()
             cmake.install()
