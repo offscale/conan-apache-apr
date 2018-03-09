@@ -8,6 +8,9 @@ class ApacheAPR(ConanFile):
     url = "https://github.com/jgsogo/conan-apache-apr"
     homepage = "https://apr.apache.org/"
     license = "http://www.apache.org/LICENSE.txt"
+    description = "The mission of the Apache Portable Runtime (APR) project is to create and maintain " \
+                  "software libraries that provide a predictable and consistent interface to underlying " \
+                  "platform-specific implementations."
     exports_sources = ["LICENSE", ]
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
