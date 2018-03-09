@@ -27,16 +27,16 @@ class ApacheAPR(ConanFile):
         tools.get("http://archive.apache.org/dist/apr/apr-{v}{ext}".format(v=self.version, ext=file_ext))
 
     def patch(self):
-        tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
-                              "# Generated .h files are stored in PROJECT_BINARY_DIR, not the",
-                              """
-                              message(">>>>>>>>>>>> ${PROJECT_BINARY_DIR}/apr_escape_test_char.h")
-                              include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-                              conan_basic_setup()
-                              # Generated .h files are stored in PROJECT_BINARY_DIR, not the
-                              """)
-
         if self.settings.os == "Windows":
+            tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
+                                  "# Generated .h files are stored in PROJECT_BINARY_DIR, not the",
+                                  """
+                                  message(">>>>>>>>>>>> ${PROJECT_BINARY_DIR}/apr_escape_test_char.h")
+                                  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+                                  conan_basic_setup()
+                                  # Generated .h files are stored in PROJECT_BINARY_DIR, not the
+                                  """)
+
             if self.settings.build_type == "Debug":
                 tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
                                       "SET(install_bin_pdb ${install_bin_pdb} ${PROJECT_BINARY_DIR}/libapr-1.pdb)",
