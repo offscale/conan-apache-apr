@@ -66,6 +66,9 @@ class ApacheAPR(ConanFile):
     def package_id(self):
         self.info.options.shared = "Any"  # Both, shared and not are built always
 
+    def package(self):
+        self.copy("LICENSE", src=self.lib_name)
+
     def package_info(self):
         if self.settings.os == "Windows":
             if self.options.shared:
