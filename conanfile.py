@@ -31,7 +31,6 @@ class ApacheAPR(ConanFile):
             tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
                                   "# Generated .h files are stored in PROJECT_BINARY_DIR, not the",
                                   """
-                                  message(">>>>>>>>>>>> ${PROJECT_BINARY_DIR}/apr_escape_test_char.h")
                                   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
                                   conan_basic_setup()
                                   # Generated .h files are stored in PROJECT_BINARY_DIR, not the
