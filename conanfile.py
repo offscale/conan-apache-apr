@@ -40,15 +40,6 @@ class ApacheAPR(ConanFile):
                 tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
                                       "SET(install_bin_pdb ${install_bin_pdb} ${PROJECT_BINARY_DIR}/libapr-1.pdb)",
                                       "SET(install_bin_pdb ${install_bin_pdb} ${PROJECT_BINARY_DIR}/bin/libapr-1.pdb)")
-            tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
-                                  "INSTALL(FILES ${APR_PUBLIC_HEADERS_STATIC} ${APR_PUBLIC_HEADERS_GENERATED} DESTINATION include)",
-                                  "INSTALL(FILES ${APR_PUBLIC_HEADERS_STATIC} ${APR_PUBLIC_HEADERS_GENERATED} DESTINATION include/apr-1)")
-            tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
-                                  "  INSTALL(FILES ${APR_PRIVATE_H_FOR_HTTPD} DESTINATION include/arch/win32)",
-                                  "  INSTALL(FILES ${APR_PRIVATE_H_FOR_HTTPD} DESTINATION include/apr-1/arch/win32)")
-            tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
-                                  "INSTALL(FILES include/arch/apr_private_common.h DESTINATION include/arch)",
-                                  "INSTALL(FILES include/arch/apr_private_common.h DESTINATION include/apr-1/arch)")
 
     def build(self):
         self.patch()
@@ -64,7 +55,7 @@ class ApacheAPR(ConanFile):
             env_build.make(args=['install'])
 
     def package_id(self):
-        self.info.options.shared = "Any"  # Both, shared and not are built always
+        self.info.options.shared = "Any"  # Both, shared and static are always built
 
     def package(self):
         self.copy("LICENSE", src=self.lib_name)
