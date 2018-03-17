@@ -69,4 +69,6 @@ class ApacheAPR(ConanFile):
                 self.cpp_info.defines = ["APR_DECLARE_STATIC", ]
         else:
             libs = ["apr-1", ]
+            # Modify include dirs so it matches prefix_path used by pkg-config
+            self.cpp_info.includedirs = [os.path.join("include", "apr-1"),]
         self.cpp_info.libs = libs
