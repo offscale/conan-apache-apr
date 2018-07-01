@@ -1,5 +1,8 @@
-from conans import ConanFile, AutoToolsBuildEnvironment, tools, CMake
+
 import os
+import glob
+
+from conans import ConanFile, AutoToolsBuildEnvironment, tools, CMake
 
 
 class ApacheAPR(ConanFile):
@@ -54,11 +57,20 @@ class ApacheAPR(ConanFile):
             env_build.make()
             env_build.make(args=['install'])
 
-    def package_id(self):
-        self.info.options.shared = "Any"  # Both, shared and static are always built
-
     def package(self):
         self.copy("LICENSE", src=self.lib_name)
+
+        # And I modify deployed folder a little bit given config options (needed in Mac to link against desired libs)
+        if self.options.shared:
+            for f in glob.glob(os.path.join(self.package_folder, "lib", "*.a")):
+                os.remove(f)
+        else:
+            for f in glob.glob(os.path.join(self.package_folder, "lib", "*.dylib")):
+                os.remove(f)
+            for f in glob.glob(os.path.join(self.package_folder, "lib", "*.so*")):
+                os.remove(f)
+            for f in glob.glob(os.path.join(self.package_folder, "lib", "*.la")):
+                os.remove(f)
 
     def package_info(self):
         if self.settings.os == "Windows":
@@ -69,6 +81,7 @@ class ApacheAPR(ConanFile):
                 self.cpp_info.defines = ["APR_DECLARE_STATIC", ]
         else:
             libs = ["apr-1", ]
-            # Modify include dirs so it matches prefix_path used by pkg-config
-            self.cpp_info.includedirs = [os.path.join("include", "apr-1"),]
+            if not self.options.shared:
+                libs += ["pthread", ]
+            self.cpp_info.includedirs = [os.path.join("include", "apr-1"), ]
         self.cpp_info.libs = libs
