@@ -27,7 +27,7 @@ matrix:
         env: CONAN_GCC_VERSIONS=7 CONAN_ARCHS=x86 CONAN_BUILD_TYPES=Release CONAN_DOCKER_IMAGE=lasote/conangcc7-i386
       # Clang compilation
       - <<: *linux
-        env: CONAN_CLANG_VERSIONS=4.0 CONAN_ARCHS=x86_64 CONAN_BUILD_TYPES=Release CONAN_DOCKER_IMAGE=lasote/conanclang39
+        env: CONAN_CLANG_VERSIONS=4.0 CONAN_ARCHS=x86_64 CONAN_BUILD_TYPES=Release CONAN_DOCKER_IMAGE=lasote/conanclang40
       - <<: *linux
         env: CONAN_CLANG_VERSIONS=5.0 CONAN_ARCHS=x86_64 CONAN_BUILD_TYPES=Release CONAN_DOCKER_IMAGE=lasote/conanclang50
       #  - a x86 build for Clang
