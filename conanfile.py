@@ -14,7 +14,7 @@ class ApacheAPR(ConanFile):
     description = "The mission of the Apache Portable Runtime (APR) project is to create and maintain " \
                   "software libraries that provide a predictable and consistent interface to underlying " \
                   "platform-specific implementations."
-    exports_sources = ["LICENSE", ]
+    exports_sources = ["LICENSE", "patches/*.patch" ]
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     default_options = "shared=False"
@@ -30,23 +30,27 @@ class ApacheAPR(ConanFile):
         tools.get("http://archive.apache.org/dist/apr/apr-{v}{ext}".format(v=self.version, ext=file_ext))
 
     def patch(self):
-        if self.settings.os == "Windows":
+        if self.settings.os == "Windows" and self.settings.build_type == "Debug":
             tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
-                                  "# Generated .h files are stored in PROJECT_BINARY_DIR, not the",
-                                  """
-                                  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-                                  conan_basic_setup()
-                                  # Generated .h files are stored in PROJECT_BINARY_DIR, not the
-                                  """)
+                                  "SET(install_bin_pdb ${install_bin_pdb} ${PROJECT_BINARY_DIR}/libapr-1.pdb)",
+                                  "SET(install_bin_pdb ${install_bin_pdb} ${PROJECT_BINARY_DIR}/bin/libapr-1.pdb)")
 
-            if self.settings.build_type == "Debug":
-                tools.replace_in_file(os.path.join(self.lib_name, 'CMakeLists.txt'),
-                                      "SET(install_bin_pdb ${install_bin_pdb} ${PROJECT_BINARY_DIR}/libapr-1.pdb)",
-                                      "SET(install_bin_pdb ${install_bin_pdb} ${PROJECT_BINARY_DIR}/bin/libapr-1.pdb)")
+        if self.settings.os == "Windows" and self.settings.compiler == "gcc":  # MinGW builds
+            # Apply patch inspired in this one: https://bz.apache.org/bugzilla/show_bug.cgi?id=51724
+            tools.patch(base_path=self.lib_name, patch_file=os.path.join("patches", "mingw.patch"))
+
 
     def build(self):
         self.patch()
-        if self.settings.os == "Windows":
+
+        if self.settings.os == "Windows" and self.settings.compiler == "gcc":  # MinGW build
+            with tools.chdir(self.lib_name):
+                # Problem compiling with 64 bits due to flags: https://wiki.apache.org/logging-log4cxx/MSWindowsBuildInstructions
+                # Build instructions taken from apache-log4cxx: https://sourceforge.net/p/mingw-w64/discussion/723798/thread/baa59718/
+                self.run("./buildconf", win_bash=True)
+                self.run("./configure CFLAGS=\"-O0 -s -mms-bitfields\" CXXFLAGS=\"-O0 -s -mms-bitfields\"", win_bash=True)
+                self.run("make && make install")
+        elif self.settings.os == "Windows":
             cmake = CMake(self)
             cmake.configure(source_folder=self.lib_name)
             cmake.build()
