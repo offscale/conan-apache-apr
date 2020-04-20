@@ -7,7 +7,7 @@ from conans import ConanFile, AutoToolsBuildEnvironment, tools, CMake
 
 class ApacheAPR(ConanFile):
     name = "apache-apr"
-    version = "1.6.3"
+    version = "1.7.0"
     url = "https://github.com/jgsogo/conan-apache-apr"
     homepage = "https://apr.apache.org/"
     license = "http://www.apache.org/LICENSE.txt"
@@ -26,8 +26,13 @@ class ApacheAPR(ConanFile):
         del self.settings.compiler.libcxx  # It is a C library
 
     def source(self):
-        file_ext = ".tar.gz" if not self.settings.os == "Windows" else "-win32-src.zip"
-        tools.get("http://archive.apache.org/dist/apr/apr-{v}{ext}".format(v=self.version, ext=file_ext))
+        file_ext, sha256 = (
+            ".tar.gz", "48e9dbf45ae3fdc7b491259ffb6ccf7d63049ffacbc1c0977cced095e4c2d5a2"
+        ) if not self.settings.os == "Windows" else (
+            "-win32-src.zip", "4ce4c94887a2519c22f788e18f84ad93ed93703759e06c8bebebcdc058781fcf"
+        )
+        tools.get("http://archive.apache.org/dist/apr/apr-{v}{ext}".format(v=self.version, ext=file_ext),
+                  sha256=sha256)
 
     def patch(self):
         if self.settings.os == "Windows":
